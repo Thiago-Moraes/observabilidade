@@ -1,6 +1,6 @@
 version: "3"
 
-services:  
+services:
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.13.0
@@ -21,9 +21,9 @@ services:
       - ./elasticsearch_data:/usr/share/elasticsearch/data
     ports:
       - 9200:9200
-    networks: 
+    networks:
         - observability
-   
+
   kibana:
     image: docker.elastic.co/kibana/kibana:7.13.0
     container_name: kibana
@@ -32,7 +32,7 @@ services:
     environment:
       ELASTICSEARCH_URL: http://elasticsearch:9200
       ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
-    networks: 
+    networks:
         - observability
 
   metricbeat:
@@ -43,29 +43,29 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./beats/metric/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml
     restart: on-failure
-    networks: 
+    networks:
       - observability
 
   heartbeat:
     image: docker.elastic.co/beats/heartbeat:7.13.0
     container_name: heartbeat
-    volumes:      
+    volumes:
     - ./beats/heartbeat/heartbeat.yml:/usr/share/heartbeat/heartbeat.yml
-    environment: 
+    environment:
     - setup.kibana.host=kibana:5601
-    networks: 
+    networks:
       - observability
 
-  apm:
-    image: docker.elastic.co/apm/apm-server-oss:7.13.0
-    container_name: apm
-    volumes:      
-    - ./apm/apm-server.yml:/usr/share/apm-server/apm-server.yml
-    ports:
-      - "8200:8200"
-    restart: on-failure
-    networks: 
-      - observability
+  # apm:
+  #   image: docker.elastic.co/apm/apm-server-oss:7.13.0
+  #   container_name: apm
+  #   volumes:
+  #   - ./apm/apm-server.yml:/usr/share/apm-server/apm-server.yml
+  #   ports:
+  #     - "8200:8200"
+  #   restart: on-failure
+  #   networks:
+  #     - observability
 
 networks:
   observability:
